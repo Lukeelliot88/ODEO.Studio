@@ -1,0 +1,5 @@
+body {
+    margin: 0;
+    overflow: hidden; /* Prevent scrollbars from appearing */
+    background-color: #f0f0f0;
+}
