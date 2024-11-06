@@ -29,12 +29,12 @@ function preload() {
     for (let i = start; i <= end; i++) {
       samplesSets[index].push(
         loadSound(
-          `${prefix}_${i}.aac`,  // Change file extension to .aac
+          `${prefix}_${i}.m4a`,  // Changed file extension from .aac to .m4a
           () => {
-            console.log(`Loaded ${prefix}_${i}.aac`);
+            console.log(`Loaded ${prefix}_${i}.m4a`);
           },
           (err) => {
-            console.error(`Failed to load ${prefix}_${i}.aac`, err);
+            console.error(`Failed to load ${prefix}_${i}.m4a`, err);
           }
         )
       );
