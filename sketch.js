@@ -134,7 +134,167 @@ class BaseAnimation {
   }
 }
 
-// Your animation classes (Anim_0, Anim_1, etc.) would go here, unchanged.
+// Animation Classes
+class Anim_0 extends BaseAnimation {
+  constructor(color) {
+    super(color);
+    this.size = 20;
+    this.angle = random(TWO_PI);
+  }
+
+  draw() {
+    this.fillWithAlpha();
+    const x = width / 2 + 100 * cos(this.angle);
+    const y = height / 2 + 100 * sin(this.angle);
+    ellipse(x, y, this.size, this.size);
+    this.size += 5;
+    this.angle += 0.1;
+    this.fadeOut();
+  }
+}
+
+class Anim_1 extends BaseAnimation {
+  constructor(color) {
+    super(color);
+    this.size = 20; // Start larger
+  }
+
+  draw() {
+    this.fillWithAlpha();
+    rect(width / 4, height / 2 - 25, this.size, 100);
+    this.size += 5; // Faster increase
+    this.fadeOut();
+  }
+}
+
+class Anim_2 extends BaseAnimation {
+  constructor(color) {
+    super(color);
+    this.angle = 0;
+    this.size = 300; // Start larger
+  }
+
+  draw() {
+    this.fillWithAlpha();
+    push();
+    translate(width / 2, height / 2);
+    rotate(this.angle);
+    rectMode(CENTER);
+    rect(0, 0, this.size, this.size);
+    pop();
+    this.angle += 0.1; // Increased rotation speed
+    this.fadeOut();
+  }
+}
+
+class Anim_3 extends BaseAnimation {
+  constructor(color) {
+    super(color);
+  }
+
+  draw() {
+    this.fillWithAlpha();
+    rect(0, 0, width, height);
+    this.fadeOut();
+  }
+}
+
+class Anim_4 extends BaseAnimation {
+  constructor(color) {
+    super(color);
+    this.posy = height + 50; // Starting position
+  }
+
+  draw() {
+    this.fillWithAlpha();
+    rect(0, this.posy - 50, width, 70);
+    this.posy *= 0.9; // Faster descent
+    this.fadeOut();
+  }
+}
+
+class Anim_5 extends BaseAnimation {
+  constructor(color) {
+    super(color);
+    this.posy = height + 50;
+  }
+
+  draw() {
+    this.fillWithAlpha();
+    rect(0, this.posy - 50, width, 50);
+    rect(0, height - this.posy, width, 50);
+    this.posy *= 0.95; // Faster downward movement
+    this.fadeOut();
+  }
+}
+
+class Anim_6 extends BaseAnimation {
+  constructor(color) {
+    super(color);
+    this.size = 80; // Maintain size
+    this.x = random(width);
+    this.y = random(height);
+  }
+
+  draw() {
+    this.fillWithAlpha();
+    ellipse(this.x, this.y, this.size, this.size);
+    this.fadeOut();
+  }
+}
+
+class Anim_7 extends BaseAnimation {
+  constructor(color) {
+    super(color);
+    this.angle = 0;
+    this.size = 100; // Start larger
+    this.amplitude = 50; // Increased amplitude for more dynamic movement
+  }
+
+  draw() {
+    this.fillWithAlpha();
+    const x = width / 2 + this.size * cos(this.angle);
+    const y =
+      height / 2 +
+      this.size * sin(this.angle) +
+      this.amplitude * sin(frameCount * 0.1);
+    ellipse(x, y, this.size * 1.5, this.size * 1.5); // Bigger ellipses
+    this.angle += 0.1; // Increased rotation speed
+    this.size += 0.5; // Slightly faster size increase
+    this.fadeOut();
+  }
+}
+
+class Anim_8 extends BaseAnimation {
+  constructor(color) {
+    super(color);
+    this.height = 0;
+  }
+
+  draw() {
+    this.fillWithAlpha();
+    noStroke();
+    rect(0, height / 2 - this.height / 2, width, this.height);
+    this.height += 5;
+    this.fadeOut();
+  }
+}
+
+class Anim_9 extends BaseAnimation {
+  constructor(color) {
+    super(color);
+    this.x = random(width);
+    this.y = random(height);
+    this.size = 100; // Initial size
+  }
+
+  draw() {
+    this.fillWithAlpha();
+    ellipse(this.x, this.y, this.size, this.size);
+    this.size += 3;
+    this.fadeOut();
+  }
+}
 
 // Map keys to animations
 const Animations = {
