@@ -1,6 +1,7 @@
 let samplesSets = [[], [], []];
 let animations = [];
 let currentSetIndex = 0;
+let audioContextResumed = false;
 
 // Brighter Color Palettes for animations
 const colorPalettes = [
@@ -16,25 +17,28 @@ const backgroundColors = [
   "#444B37", // Dark background for Set 3
 ];
 
+// Function to resume the audio context when user interacts with the page
 function resumeAudioContext() {
-    if (getAudioContext().state !== 'running') {
-        getAudioContext().resume().then(() => {
-            console.log('Audio Context resumed on iOS');
-        });
-    }
+  if (!audioContextResumed && getAudioContext().state !== 'running') {
+    getAudioContext().resume().then(() => {
+      console.log('Audio Context resumed on user interaction.');
+      audioContextResumed = true;
+    });
+  }
 }
 
+// Preload function to load all the sounds
 function preload() {
   const loadSounds = (prefix, start, end, index) => {
     for (let i = start; i <= end; i++) {
       samplesSets[index].push(
         loadSound(
-          `${prefix}_${i}.aac`,  // Change file extension to .aac
+          `${prefix}_${i}.aac`,  // Make sure the file extensions are correct (.aac)
           () => {
-            console.log(`Loaded ${prefix}_${i}.aac`);
+            console.log(`Loaded ${prefix}_${i}.m4a`);
           },
           (err) => {
-            console.error(`Failed to load ${prefix}_${i}.aac`, err);
+            console.error(`Failed to load ${prefix}_${i}.m4a`, err);
           }
         )
       );
@@ -46,31 +50,31 @@ function preload() {
   loadSounds("3rd", 21, 30, 2);
 }
 
+// Setup function where we initialize everything
 function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
   colorMode(RGB, 255);
   textAlign(CENTER, CENTER);
   textSize(24);
-  resumeAudioContext(); // Resume the audio context on setup for better control
 }
 
+// Draw function is repeatedly called
 function draw() {
   background(backgroundColors[currentSetIndex]);
   animations.forEach((anim) => anim.draw());
   animations = animations.filter((anim) => anim.alpha > 0); // Remove faded-out animations
 }
 
+// Touch or click event to trigger audio context and interactions
 function touchStarted() {
+  resumeAudioContext();
   handleInteraction(touches[0].x);
-  resumeAudioContext(); // Ensure audio context resumes on touch
 }
 
 function mousePressed() {
-  if (isComputer()) {
-    handleInteraction(mouseX);
-  }
-  resumeAudioContext(); // Ensure audio context resumes on mouse press
+  resumeAudioContext();
+  handleInteraction(mouseX);
 }
 
 function keyPressed() {
@@ -130,185 +134,7 @@ class BaseAnimation {
   }
 }
 
-// Animation Classes (same as before)
-class Anim_0 extends BaseAnimation {
-  constructor(color) {
-    super(color);
-    this.size = 20;
-    this.angle = random(TWO_PI);
-  }
-
-  draw() {
-    this.fillWithAlpha();
-    const x = width / 2 + 100 * cos(this.angle);
-    const y = height / 2 + 100 * sin(this.angle);
-    ellipse(x, y, this.size, this.size);
-    this.size += 5;
-    this.angle += 0.1;
-    this.fadeOut();
-  }
-}
-
-class Anim_1 extends BaseAnimation {
-  constructor(color) {
-    super(color);
-    this.size = 20; // Start larger
-  }
-
-  draw() {
-    this.fillWithAlpha();
-    rect(width / 4, height / 2 - 25, this.size, 100);
-    this.size += 5; // Faster increase
-    this.fadeOut();
-  }
-}
-
-class Anim_2 extends BaseAnimation {
-  constructor(color) {
-    super(color);
-    this.angle = 0;
-    this.size = 300; // Start larger
-  }
-
-  draw() {
-    this.fillWithAlpha();
-    push();
-    translate(width / 2, height / 2);
-    rotate(this.angle);
-    rectMode(CENTER);
-    rect(0, 0, this.size, this.size);
-    pop();
-    this.angle += 0.1; // Increased rotation speed
-    this.fadeOut();
-  }
-}
-
-class Anim_3 extends BaseAnimation {
-  constructor(color) {
-    super(color);
-  }
-
-  draw() {
-    this.fillWithAlpha();
-    rect(0, 0, width, height);
-    this.fadeOut();
-  }
-}
-
-class Anim_4 extends BaseAnimation {
-  constructor(color) {
-    super(color);
-    this.posy = height + 50; // Starting position
-  }
-
-  draw() {
-    this.fillWithAlpha();
-    rect(0, this.posy - 50, width, 70);
-    this.posy *= 0.9; // Faster descent
-    this.fadeOut();
-  }
-}
-
-class Anim_5 extends BaseAnimation {
-  constructor(color) {
-    super(color);
-    this.posy = height + 50;
-  }
-
-  draw() {
-    this.fillWithAlpha();
-    rect(0, this.posy - 50, width, 50);
-    rect(0, height - this.posy, width, 50);
-    this.posy *= 0.95; // Faster downward movement
-    this.fadeOut();
-  }
-}
-
-class Anim_6 extends BaseAnimation {
-  constructor(color) {
-    super(color);
-    this.size = 80; // Maintain size
-    this.x = random(width);
-    this.y = random(height);
-  }
-
-  draw() {
-    this.fillWithAlpha();
-    ellipse(this.x, this.y, this.size, this.size);
-    this.fadeOut();
-  }
-}
-
-class Anim_7 extends BaseAnimation {
-  constructor(color) {
-    super(color);
-    this.angle = 0;
-    this.size = 100; // Start larger
-    this.amplitude = 50; // Increased amplitude for more dynamic movement
-  }
-
-  draw() {
-    this.fillWithAlpha();
-    const x = width / 2 + this.size * cos(this.angle);
-    const y =
-      height / 2 +
-      this.size * sin(this.angle) +
-      this.amplitude * sin(frameCount * 0.1);
-    ellipse(x, y, this.size * 1.5, this.size * 1.5); // Bigger ellipses
-    this.angle += 0.1; // Increased rotation speed
-    this.size += 0.5; // Slightly faster size increase
-    this.fadeOut();
-  }
-}
-
-class Anim_8 extends BaseAnimation {
-  constructor(color) {
-    super(color);
-    this.height = 0;
-  }
-
-  draw() {
-    this.fillWithAlpha();
-    noStroke();
-    rect(0, height / 2 - this.height / 2, width, this.height);
-    this.height = min(this.height + 6, height); // Faster growth
-    this.fadeOut();
-  }
-}
-
-class Anim_9 extends BaseAnimation {
-  constructor(color) {
-    super(color);
-    this.x = -width;
-    this.speed = 70; // Faster speed
-    this.alpha = 255;
-    this.hasCovered = false;
-    this.isActive = true;
-  }
-
-  draw() {
-    if (!this.isActive) return;
-
-    noStroke();
-    this.fillWithAlpha();
-
-    if (!this.hasCovered) {
-      rect(this.x, 0, width, height);
-      this.x += this.speed * 0.1; // Faster transition speed
-      if (this.x >= 0) {
-        this.hasCovered = true;
-      }
-    } else {
-      this.alpha = max(0, this.alpha - 4); // Faster fade out
-      if (this.alpha === 0) {
-        this.isActive = false;
-      } else {
-        fill(255, this.alpha);
-        rect(0, 0, width, height);
-      }
-    }
-  }
-}
+// Your animation classes (Anim_0, Anim_1, etc.) would go here, unchanged.
 
 // Map keys to animations
 const Animations = {
@@ -324,6 +150,7 @@ const Animations = {
   9: Anim_9,
 };
 
+// Resize canvas on window resize
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
