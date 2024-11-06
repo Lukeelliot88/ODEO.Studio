@@ -16,5 +16,13 @@
 </head>
 <body>
     <script src="sketch.js"></script> <!-- Link to your JavaScript file -->
+
+    <script>
+        // Ensures audio context is resumed after page load
+        document.addEventListener("DOMContentLoaded", function() {
+            resumeAudioContext();
+        });
+    </script>
 </body>
 </html>
+
