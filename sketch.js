@@ -1,7 +1,6 @@
 let samplesSets = [[], [], []];
 let animations = [];
 let currentSetIndex = 0;
-let audioContextResumed = false;
 
 // Brighter Color Palettes for animations
 const colorPalettes = [
@@ -17,23 +16,20 @@ const backgroundColors = [
   "#444B37", // Dark background for Set 3
 ];
 
-// Function to resume the audio context when user interacts with the page
 function resumeAudioContext() {
-  if (!audioContextResumed && getAudioContext().state !== 'running') {
-    getAudioContext().resume().then(() => {
-      console.log('Audio Context resumed on user interaction.');
-      audioContextResumed = true;
-    });
-  }
+    if (getAudioContext().state !== 'running') {
+        getAudioContext().resume().then(() => {
+            console.log('Audio Context resumed on iOS');
+        });
+    }
 }
 
-// Preload function to load all the sounds
 function preload() {
   const loadSounds = (prefix, start, end, index) => {
     for (let i = start; i <= end; i++) {
       samplesSets[index].push(
         loadSound(
-          `${prefix}_${i}.aac`,  // Make sure the file extensions are correct (.aac)
+          `${prefix}_${i}.mp3`,
           () => {
             console.log(`Loaded ${prefix}_${i}.m4a`);
           },
@@ -50,31 +46,33 @@ function preload() {
   loadSounds("3rd", 21, 30, 2);
 }
 
-// Setup function where we initialize everything
 function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
   colorMode(RGB, 255);
   textAlign(CENTER, CENTER);
   textSize(24);
+  resumeAudioContext();
 }
 
-// Draw function is repeatedly called
+
+
 function draw() {
   background(backgroundColors[currentSetIndex]);
   animations.forEach((anim) => anim.draw());
   animations = animations.filter((anim) => anim.alpha > 0); // Remove faded-out animations
 }
 
-// Touch or click event to trigger audio context and interactions
 function touchStarted() {
-  resumeAudioContext();
   handleInteraction(touches[0].x);
+  resumeAudioContext();
 }
 
 function mousePressed() {
+  if (isComputer()) {
+    handleInteraction(mouseX);
+  }
   resumeAudioContext();
-  handleInteraction(mouseX);
 }
 
 function keyPressed() {
@@ -102,7 +100,7 @@ function playAnimation(index) {
   const animationClass = Animations[index];
 
   if (animationClass) {
-    resumeAudioContext(); // Ensure audio context is resumed before playing sound
+    resumeAudioContext();
     samples[index].play();
     const newAnim = new animationClass(random(colors));
     animations.push(newAnim);
@@ -275,7 +273,7 @@ class Anim_8 extends BaseAnimation {
     this.fillWithAlpha();
     noStroke();
     rect(0, height / 2 - this.height / 2, width, this.height);
-    this.height += 5;
+    this.height = min(this.height + 6, height); // Faster growth
     this.fadeOut();
   }
 }
@@ -283,16 +281,34 @@ class Anim_8 extends BaseAnimation {
 class Anim_9 extends BaseAnimation {
   constructor(color) {
     super(color);
-    this.x = random(width);
-    this.y = random(height);
-    this.size = 100; // Initial size
+    this.x = -width;
+    this.speed = 70; // Faster speed
+    this.alpha = 255;
+    this.hasCovered = false;
+    this.isActive = true;
   }
 
   draw() {
+    if (!this.isActive) return;
+
+    noStroke();
     this.fillWithAlpha();
-    ellipse(this.x, this.y, this.size, this.size);
-    this.size += 3;
-    this.fadeOut();
+
+    if (!this.hasCovered) {
+      rect(this.x, 0, width, height);
+      this.x += this.speed * 0.1; // Faster transition speed
+      if (this.x >= 0) {
+        this.hasCovered = true;
+      }
+    } else {
+      this.alpha = max(0, this.alpha - 4); // Faster fade out
+      if (this.alpha === 0) {
+        this.isActive = false;
+      } else {
+        fill(255, this.alpha);
+        rect(0, 0, width, height);
+      }
+    }
   }
 }
 
@@ -310,7 +326,6 @@ const Animations = {
   9: Anim_9,
 };
 
-// Resize canvas on window resize
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
