@@ -29,12 +29,12 @@ function preload() {
     for (let i = start; i <= end; i++) {
       samplesSets[index].push(
         loadSound(
-          `${prefix}_${i}.m4a`,  // Changed file extension from .aac to .m4a
+          `${prefix}_${i}.aac`,  // Change file extension to .aac
           () => {
-            console.log(`Loaded ${prefix}_${i}.m4a`);
+            console.log(`Loaded ${prefix}_${i}.aac`);
           },
           (err) => {
-            console.error(`Failed to load ${prefix}_${i}.m4a`, err);
+            console.error(`Failed to load ${prefix}_${i}.aac`, err);
           }
         )
       );
@@ -52,7 +52,7 @@ function setup() {
   colorMode(RGB, 255);
   textAlign(CENTER, CENTER);
   textSize(24);
-  resumeAudioContext();
+  resumeAudioContext(); // Resume the audio context on setup for better control
 }
 
 function draw() {
@@ -63,14 +63,14 @@ function draw() {
 
 function touchStarted() {
   handleInteraction(touches[0].x);
-  resumeAudioContext();
+  resumeAudioContext(); // Ensure audio context resumes on touch
 }
 
 function mousePressed() {
   if (isComputer()) {
     handleInteraction(mouseX);
   }
-  resumeAudioContext();
+  resumeAudioContext(); // Ensure audio context resumes on mouse press
 }
 
 function keyPressed() {
@@ -98,7 +98,7 @@ function playAnimation(index) {
   const animationClass = Animations[index];
 
   if (animationClass) {
-    resumeAudioContext();
+    resumeAudioContext(); // Ensure audio context is resumed before playing sound
     samples[index].play();
     const newAnim = new animationClass(random(colors));
     animations.push(newAnim);
@@ -130,7 +130,7 @@ class BaseAnimation {
   }
 }
 
-// Animation Classes
+// Animation Classes (same as before)
 class Anim_0 extends BaseAnimation {
   constructor(color) {
     super(color);
